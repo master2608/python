@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Atividade 5 - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Entrar no Sistema</h2>
+        
+        {% if mensagem %}
+            <div class="msg {{ status }}">{{ mensagem }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <div class="campo">
+                <label>Usuário:</label>
+                <input type="text" name="usuario" required placeholder="Sua matrícula ou usuário">
+            </div>
+            <div class="campo">
+                <label>Senha:</label>
+                <input type="password" name="senha" required placeholder="Digite sua senha">
+            </div>
+            <button type="submit" class="btn">Validar Acesso</button>
+        </form>
+    </div>
+
+</body>
+</html>

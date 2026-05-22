@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Acesso Permitido</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="login-box" style="text-align: center;">
+        <div class="msg sucesso" style="margin-bottom: 20px;">Acesso Permitido!</div>
+        <h2>Bem-vindo, {{ nome }}!</h2>
+        <p style="color: #666; margin-bottom: 20px;">Você fez login com sucesso no sistema.</p>
+        <a href="{{ url_for('login') }}" class="btn" style="text-decoration: none; display: block;">Voltar</a>
+    </div>
+
+</body>
+</html>
