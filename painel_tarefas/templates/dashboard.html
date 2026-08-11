@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block titulo %}Dashboard - Painel de Tarefas{% endblock %}
+{% block conteudo %}
+
+<div class="alert alert-info d-flex align-items-center">
+    <i class="bi bi-quote fs-4 me-2"></i>
+    <span>{{ frase }}</span>
+</div>
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+    <h4 class="mb-0">Minhas Tarefas</h4>
+    <div class="d-flex align-items-center gap-2">
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item filtro-status" href="#" data-status="todas">Todas</a></li>
+                <li><a class="dropdown-item filtro-status" href="#" data-status="pendente">Pendente</a></li>
+                <li><a class="dropdown-item filtro-status" href="#" data-status="em_andamento">Em andamento</a></li>
+                <li><a class="dropdown-item filtro-status" href="#" data-status="concluida">Concluída</a></li>
+            </ul>
+        </div>
+        <a href="{{ url_for('nova_tarefa') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nova Tarefa
+        </a>
+    </div>
+</div>
+
+<div id="listaTarefas" class="row g-3">
+    {% include 'partials/_lista_tarefas.html' %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.filtro-status').forEach(function (item) {
+    item.addEventListener('click', function (evento) {
+        evento.preventDefault();
+        const status = this.getAttribute('data-status');
+        fetch(`/api/tarefas?status=${status}`)
+            .then(resposta => resposta.json())
+            .then(tarefas => montarLista(tarefas));
+    });
+});
+
+function corDoCard(status) {
+    if (status === 'pendente') return 'border-warning';
+    if (status === 'em_andamento') return 'border-primary';
+    if (status === 'concluida') return 'border-success';
+    return '';
+}
+
+function rotuloStatus(status) {
+    if (status === 'pendente') return 'Pendente';
+    if (status === 'em_andamento') return 'Em andamento';
+    if (status === 'concluida') return 'Concluída';
+    return status;
+}
+
+function montarLista(tarefas) {
+    const container = document.getElementById('listaTarefas');
+
+    if (tarefas.length === 0) {
+        container.innerHTML = '<div class="col-12"><p class="text-muted">Nenhuma tarefa encontrada.</p></div>';
+        return;
+    }
+
+    let html = '';
+    tarefas.forEach(function (tarefa) {
+        html += `
+        <div class="col-md-4">
+            <div class="card h-100 ${corDoCard(tarefa.status)}">
+                <div class="card-body">
+                    <h5 class="card-title">${tarefa.titulo}</h5>
+                    <p class="card-text">${tarefa.descricao ? tarefa.descricao : ''}</p>
+                    <span class="badge bg-secondary">${rotuloStatus(tarefa.status)}</span>
+                </div>
+                <div class="card-footer d-flex justify-content-end gap-2 bg-transparent">
+                    <a href="/editar/${tarefa.id}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                    <a href="/excluir/${tarefa.id}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Deseja excluir esta tarefa?')"><i class="bi bi-trash"></i></a>
+                </div>
+            </div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+}
+</script>
+{% endblock %}
